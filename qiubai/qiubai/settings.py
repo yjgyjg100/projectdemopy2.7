@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'qiubai.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0'
+#USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -49,7 +49,19 @@ ROBOTSTXT_OBEY = True
 #SPIDER_MIDDLEWARES = {
 #    'qiubai.middlewares.MyCustomSpiderMiddleware': 543,
 #}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware':None,
+    'qiubai.middlewares.RandomUAMiddleware':400,
+    'qiubai.middlewares.PrintUAMiddleware':401,
 
+}
+
+
+ITEM_PIPELINES = {
+    'qiubai.pipelines.MongoPipeline': 300,
+}
+MONGO_URI = '127.0.0.1:27017'
+MONGO_DATABASE = "qiubai"
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
