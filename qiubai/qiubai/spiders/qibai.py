@@ -1,27 +1,54 @@
+#from qiubai.items import QiubaiItem
 
 
 
 
 import scrapy
 from scrapy.http import Request
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
 
-from qiubai.items import QiubaiItem
 
-
-class QiubaiSpider(scrapy.Spider):
+class QiubaiSpider(CrawlSpider):
     name = "qiubai"
     start_urls = [
         "http://www.qiushibaike.com",
     ]
 
-    def parse(self,response):
+
+    rules = [
+            Rule(LinkExtractor(allow="/article/*")),
+            Rule(LinkExtractor(allow="/users/*"),callback="parse_name")
+    ]
+
+    def parse_name(self,response):
+        print response.xpath("//div[@class='user-header-cover']/h2/text()").extract()[0]
+
+
+
+
+
+
+
+
+
+
+
+
+
+        '''
+        extractor_name = LinkExtractor(allow="/article/*")
+        links = extractor.extract_links(response)
+        for link in links:
+            yield Request(link.url,self.parse_detail_page)
+
         for href in response.xpath('//span[@class="stats-comments"]/a/@href').extract():
             detail_url = response.urljoin(href)
             req = Request(detail_url, self.parse_detail_page)
             item = QiubaiItem()
             req.meta["item"] = item
             yield req
-
+        '''
     def parse_detail_page(self,response):
         item = response.meta["item"]
         item["author"] = response.xpath('//div[@class="author clearfix"]/a[2]/h2/text()').extract()[0]
@@ -48,3 +75,4 @@ class QiubaiSpider(scrapy.Spider):
     # define the fields for your item here like:
     # name = scrapy.Field()
     #pass
+
